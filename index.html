@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pastel Stamp Studio</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- HEIC/HEIF Decoder Library -->
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+
+  <!-- Cropper.js for clean framing -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.min.js"></script>
+
+  <style>
+    :root {
+      --bg-cream: #FAF8F5;
+      --surface-white: #FFFFFF;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --border-subtle: #F0ECE4;
+      --border-active: #E2DDD5;
+      --accent-soft-pink: #FDE2E4;
+      --accent-lavender: #E8E8F8;
+      --accent-sage: #E2ECE9;
+      --text-main: #3D3A37;
+      --text-muted: #8C8780;
+      --btn-primary: #8E9AAF;
+      --btn-hover: #7D899E;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --shadow-soft: 0 12px 32px rgba(180, 165, 150, 0.08);
+      --shadow-float: 0 20px 40px rgba(160, 145, 130, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      width: 100%;
+      max-width: 1120px;
+    }
+
+    @media (min-width: 900px) {
+      .app-container {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+
+    .preview-card {
+      flex: 1;
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 480px;
+      position: relative;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-float);
+    }
+
+    .placeholder-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+    }
+
+    .placeholder-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--accent-lavender);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .controls-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .upload-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px dashed var(--border-active);
+      background: #FAF8F5;
+      padding: 18px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .upload-zone:hover {
+      background: var(--accent-soft-pink);
+      border-color: #F8B4B9;
+    }
+
+    .upload-zone span {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .upload-zone small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface-white);
+      color: var(--text-main);
+      border: 1px solid var(--border-active);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--accent-lavender);
+    }
+
+    .btn-secondary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .val-badge {
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: var(--accent-sage);
+      color: #39524A;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border-subtle);
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--btn-primary);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.1s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    input[type="range"]:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .download-button {
+      background: var(--btn-primary);
+      color: #FFFFFF;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 18px rgba(142, 154, 175, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .download-button:hover:not(:disabled) {
+      background: var(--btn-hover);
+      transform: translateY(-1px);
+    }
+
+    .download-button:disabled {
+      background: #D8D2C9;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .loading-status {
+      display: none;
+      font-size: 0.85rem;
+      color: #7D899E;
+      text-align: center;
+      margin-top: -8px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(30, 27, 24, 0.5);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: var(--surface-white);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: var(--shadow-float);
+    }
+
+    .crop-wrapper {
+      width: 100%;
+      height: 420px;
+      background: #FAF8F5;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .crop-wrapper img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Pastel Stamp Studio</h1>
+    <p>Upload, crop, and generate clean perforated stamp art</p>
+  </header>
+
+  <div class="app-container">
+    <div class="preview-card">
+      <div id="placeholder" class="placeholder-box">
+        <div class="placeholder-icon">✦</div>
+        <p>Upload an image to start designing</p>
+      </div>
+      <canvas id="mainCanvas" style="display: none;"></canvas>
+    </div>
+
+    <div class="controls-card">
+      <label class="upload-zone" for="fileInput">
+        <span>Choose photo</span>
+        <small>Supports PNG, JPG, HEIC, WebP, etc.</small>
+      </label>
+      <input type="file" id="fileInput" accept="image/*,.heic,.heif" />
+
+      <div id="loadingStatus" class="loading-status">Converting format, please wait...</div>
+
+      <button id="cropModalBtn" class="btn-secondary" disabled>
+        ✂ Adjust Image Crop
+      </button>
+
+      <div class="control-item">
+        <div class="label-row">
+          <label for="stampSize">Stamp Size</label>
+          <span class="val-badge" id="sizeVal">180 px</span>
+        </div>
+        <input type="range" id="stampSize" min="80" max="450" value="180" disabled />
+      </div>
+
+      <div class="control-item">
+        <div class="label-row">
+          <label for="stampTeeth">Perforation Density</label>
+          <span class="val-badge" id="teethVal">7 teeth</span>
+        </div>
+        <input type="range" id="stampTeeth" min="3" max="14" value="7" step="1" disabled />
+      </div>
+
+      <div class="control-item">
+        <div class="label-row">
+          <label for="posX">Horizontal Position</label>
+          <span class="val-badge" id="xVal">50%</span>
+        </div>
+        <input type="range" id="posX" min="0" max="100" value="50" disabled />
+      </div>
+
+      <div class="control-item">
+        <div class="label-row">
+          <label for="posY">Vertical Position</label>
+          <span class="val-badge" id="yVal">35%</span>
+        </div>
+        <input type="range" id="posY" min="0" max="100" value="35" disabled />
+      </div>
+
+      <div class="control-item">
+        <div class="label-row">
+          <label for="bottomPad">Card Base Height</label>
+          <span class="val-badge" id="padVal">260 px</span>
+        </div>
+        <input type="range" id="bottomPad" min="150" max="5000" value="260" disabled />
+      </div>
+
+      <button id="downloadBtn" class="download-button" disabled>
+        Export Stamp
+      </button>
+    </div>
+  </div>
+
+  <div id="cropModal" class="modal-overlay">
+    <div class="modal-card">
+      <h3 style="font-size: 1.1rem;">Crop Image Size</h3>
+      <div class="crop-wrapper">
+        <img id="cropperImage" src="" alt="Crop Source" />
+      </div>
+      <div class="modal-actions">
+        <button id="cancelCropBtn" class="btn-secondary">Cancel</button>
+        <button id="applyCropBtn" class="download-button" style="padding: 10px 20px;">Apply Crop</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    const placeholder = document.getElementById('placeholder');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const loadingStatus = document.getElementById('loadingStatus');
+    const cropModalBtn = document.getElementById('cropModalBtn');
+
+    const cropModal = document.getElementById('cropModal');
+    const cropperImage = document.getElementById('cropperImage');
+    const applyCropBtn = document.getElementById('applyCropBtn');
+    const cancelCropBtn = document.getElementById('cancelCropBtn');
+
+    const stampSize = document.getElementById('stampSize');
+    const stampTeeth = document.getElementById('stampTeeth');
+    const posX = document.getElementById('posX');
+    const posY = document.getElementById('posY');
+    const bottomPad = document.getElementById('bottomPad');
+
+    const inputs = [stampSize, stampTeeth, posX, posY, bottomPad, downloadBtn, cropModalBtn];
+    let originalImgSrc = null;
+    let loadedImg = null;
+    let cropper = null;
+
+    fileInput.addEventListener('change', async (e) => {
+      let file = e.target.files[0];
+      if (!file) return;
+
+      loadingStatus.style.display = 'block';
+
+      const fileName = file.name.toLowerCase();
+      if (fileName.endsWith('.heic') || fileName.endsWith('.heif') || file.type === 'image/heic' || file.type === 'image/heif') {
+        try {
+          const conversionResult = await heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.95
+          });
+          file = Array.isArray(conversionResult) ? conversionResult[0] : conversionResult;
+        } catch (err) {
+          console.error("HEIC conversion failed:", err);
+        }
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        originalImgSrc = event.target.result;
+        const img = new Image();
+        img.onload = () => {
+          loadedImg = img;
+          inputs.forEach(i => i.removeAttribute('disabled'));
+          loadingStatus.style.display = 'none';
+          placeholder.style.display = 'none';
+          canvas.style.display = 'block';
+          render();
+        };
+        img.src = originalImgSrc;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    cropModalBtn.addEventListener('click', () => {
+      if (!originalImgSrc) return;
+      cropperImage.src = loadedImg ? loadedImg.src : originalImgSrc;
+      cropModal.style.display = 'flex';
+
+      if (cropper) cropper.destroy();
+      cropper = new Cropper(cropperImage, {
+        viewMode: 1,
+        dragMode: 'crop',
+        autoCropArea: 0.9,
+        restore: false,
+        guides: true,
+        center: true,
+        highlight: false,
+        cropBoxMovable: true,
+        cropBoxResizable: true,
+        toggleDragModeOnDblclick: false,
+        zoomable: false,
+        rotatable: false,
+        scalable: false
+      });
+    });
+
+    cancelCropBtn.addEventListener('click', () => {
+      cropModal.style.display = 'none';
+      if (cropper) cropper.destroy();
+    });
+
+    applyCropBtn.addEventListener('click', () => {
+      if (!cropper) return;
+      const croppedCanvas = cropper.getCroppedCanvas();
+      const croppedImg = new Image();
+      croppedImg.onload = () => {
+        loadedImg = croppedImg;
+        render();
+        cropModal.style.display = 'none';
+        cropper.destroy();
+      };
+      croppedImg.src = croppedCanvas.toDataURL('image/png');
+    });
+
+    [stampSize, stampTeeth, posX, posY, bottomPad].forEach(input => {
+      input.addEventListener('input', () => {
+        document.getElementById('sizeVal').textContent = `${stampSize.value} px`;
+        document.getElementById('teethVal').textContent = `${stampTeeth.value} teeth`;
+        document.getElementById('xVal').textContent = `${posX.value}%`;
+        document.getElementById('yVal').textContent = `${posY.value}%`;
+        document.getElementById('padVal').textContent = `${bottomPad.value} px`;
+        render();
+      });
+    });
+
+    function createStampPath(w, h, teeth) {
+      const path = new Path2D();
+      const radius = (w / teeth) / 3.8;
+      const stepX = w / teeth;
+      const stepY = h / teeth;
+
+      path.moveTo(0, 0);
+
+      for (let i = 0; i < teeth; i++) {
+        const cx = i * stepX + stepX / 2;
+        path.lineTo(cx - radius, 0);
+        path.arc(cx, 0, radius, Math.PI, 0, true);
+      }
+      path.lineTo(w, 0);
+
+      for (let i = 0; i < teeth; i++) {
+        const cy = i * stepY + stepY / 2;
+        path.lineTo(w, cy - radius);
+        path.arc(w, cy, radius, 1.5 * Math.PI, 0.5 * Math.PI, true);
+      }
+      path.lineTo(w, h);
+
+      for (let i = teeth - 1; i >= 0; i--) {
+        const cx = i * stepX + stepX / 2;
+        path.lineTo(cx + radius, h);
+        path.arc(cx, h, radius, 0, Math.PI, true);
+      }
+      path.lineTo(0, h);
+
+      for (let i = teeth - 1; i >= 0; i--) {
+        const cy = i * stepY + stepY / 2;
+        path.lineTo(0, cy + radius);
+        path.arc(0, cy, radius, 0.5 * Math.PI, 1.5 * Math.PI, true);
+      }
+      path.closePath();
+      return path;
+    }
+
+    function render() {
+      if (!loadedImg) return;
+
+      const size = parseInt(stampSize.value, 10);
+      const teeth = parseInt(stampTeeth.value, 10);
+      const extraPad = parseInt(bottomPad.value, 10);
+
+      const w = loadedImg.width;
+      const h = loadedImg.height;
+
+      canvas.width = w;
+      canvas.height = h + extraPad;
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 1. Draw main image
+      ctx.drawImage(loadedImg, 0, 0);
+
+      const stampX = (w - size) * (parseInt(posX.value, 10) / 100);
+      const stampY = (h - size) * (parseInt(posY.value, 10) / 100);
+
+      const stampPath = createStampPath(size, size, teeth);
+
+      // 2. Solid white cutout on top of the original image
+      ctx.save();
+      ctx.translate(stampX, stampY);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill(stampPath);
+      ctx.restore();
+
+      // 3. Render bottom stamp (exact 1:1 scale matching stampPath without white margin)
+      const bottomX = (w - size) / 2;
+      const bottomY = h + (extraPad - size) / 2;
+
+      ctx.save();
+      ctx.translate(bottomX, bottomY);
+
+      // Soft drop shadow matching the stamp outline
+      ctx.shadowColor = 'rgba(160, 140, 125, 0.22)';
+      ctx.shadowBlur = 24;
+      ctx.shadowOffsetY = 10;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill(stampPath);
+
+      // Clip precisely to the stamp perforation shape
+      ctx.shadowColor = 'transparent';
+      ctx.clip(stampPath);
+
+      // Draw the extracted image region edge-to-edge
+      ctx.drawImage(
+        loadedImg,
+        stampX, stampY, size, size,
+        0, 0, size, size
+      );
+
+      ctx.restore();
+    }
+
+    downloadBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'stamp-artwork.png';
+      link.href = canvas.toDataURL('image/png', 1.0);
+      link.click();
+    });
+  </script>
+</body>
+</html>
