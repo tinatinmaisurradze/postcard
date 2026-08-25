@@ -3,209 +3,312 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pastel Stamp Studio</title>
-  <!-- Google Fonts -->
+  <title>Tinussyy Design | Stamp Studio</title>
+
+  <!-- Google Fonts - Modern Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- HEIC/HEIF Decoder Library -->
+  <!-- Modern Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- HEIC/HEIF Decoder -->
   <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 
-  <!-- Cropper.js for clean framing -->
+  <!-- Cropper.js -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.min.css">
   <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.min.js"></script>
 
   <style>
     :root {
-      --bg-cream: #FAF8F5;
-      --surface-white: #FFFFFF;
-      --card-bg: rgba(255, 255, 255, 0.85);
-      --border-subtle: #F0ECE4;
-      --border-active: #E2DDD5;
-      --accent-soft-pink: #FDE2E4;
-      --accent-lavender: #E8E8F8;
-      --accent-sage: #E2ECE9;
-      --text-main: #3D3A37;
-      --text-muted: #8C8780;
-      --btn-primary: #8E9AAF;
-      --btn-hover: #7D899E;
-      --radius-lg: 24px;
-      --radius-md: 16px;
-      --radius-sm: 10px;
-      --shadow-soft: 0 12px 32px rgba(180, 165, 150, 0.08);
-      --shadow-float: 0 20px 40px rgba(160, 145, 130, 0.12);
+      --primary: #8B5CF6;
+      --primary-light: #A78BFA;
+      --primary-dark: #7C3AED;
+      --secondary: #EC4899;
+      --accent: #06B6D4;
+      --success: #10B981;
+      --warning: #F59E0B;
+
+      --bg-primary: #0F172A;
+      --bg-secondary: #1E293B;
+      --bg-tertiary: #334155;
+
+      --text-primary: #F8FAFC;
+      --text-secondary: #CBD5E1;
+      --text-tertiary: #94A3B8;
+
+      --border: rgba(226, 232, 240, 0.1);
+      --border-light: rgba(226, 232, 240, 0.2);
+
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.16);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.24);
+      --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.32);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-2xl: 32px;
+
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
-      background-color: var(--bg-cream);
-      color: var(--text-main);
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      font-weight: 400;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
     }
 
+    /* Animated background gradient */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+      font-family: 'Syne', system-ui, sans-serif;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+    h2 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+    h3 { font-size: clamp(1.1rem, 3vw, 1.5rem); }
+
+    p { color: var(--text-secondary); }
+
+    /* Header & Navigation */
     header {
       text-align: center;
-      margin-bottom: 28px;
+      padding: 60px 20px 40px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .logo {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary-light);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: inline-block;
+      padding: 8px 16px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      transition: all var(--transition-base);
+    }
+
+    .logo:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: var(--primary-light);
     }
 
     header h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
     }
 
     header p {
-      font-size: 0.95rem;
-      color: var(--text-muted);
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
     }
 
+    /* Main Container */
     .app-container {
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-      width: 100%;
-      max-width: 1120px;
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
     }
 
-    @media (min-width: 900px) {
+    @media (max-width: 1024px) {
       .app-container {
-        flex-direction: row;
-        align-items: flex-start;
+        grid-template-columns: 1fr;
       }
     }
 
+    /* Preview Card */
     .preview-card {
-      flex: 1;
-      background: var(--surface-white);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--shadow-soft);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      padding: 32px;
+      backdrop-filter: blur(20px);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 480px;
+      min-height: 600px;
       position: relative;
+      overflow: hidden;
+      transition: all var(--transition-base);
+    }
+
+    .preview-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .preview-card:hover {
+      border-color: var(--border-light);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%);
     }
 
     canvas {
       max-width: 100%;
       height: auto;
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-float);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      transition: all var(--transition-base);
     }
 
     .placeholder-box {
+      text-align: center;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .placeholder-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+      border: 2px solid var(--border-light);
+      border-radius: 50%;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Controls Card */
+    .controls-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+      transition: all var(--transition-base);
+      animation: fadeInRight 0.8s ease-out 0.2s both;
+    }
+
+    .controls-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 70% 70%, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
+      border-radius: var(--radius-2xl);
+      pointer-events: none;
+    }
+
+    .controls-card:hover {
+      border-color: var(--border-light);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%);
+    }
+
+    /* Upload Zone */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      background: rgba(139, 92, 246, 0.05);
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 12px;
-      color: var(--text-muted);
+      position: relative;
+      overflow: hidden;
     }
 
-    .placeholder-icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: var(--accent-lavender);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-    }
-
-    .controls-card {
-      width: 100%;
-      max-width: 380px;
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      box-shadow: var(--shadow-soft);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .upload-zone {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 1.5px dashed var(--border-active);
-      background: #FAF8F5;
-      padding: 18px;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .upload-zone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity var(--transition-base);
     }
 
     .upload-zone:hover {
-      background: var(--accent-soft-pink);
-      border-color: #F8B4B9;
+      border-color: var(--primary);
+      background: rgba(139, 92, 246, 0.1);
+    }
+
+    .upload-zone:hover::before {
+      opacity: 1;
     }
 
     .upload-zone span {
-      font-size: 0.9rem;
       font-weight: 600;
-      color: var(--text-main);
+      color: var(--text-primary);
     }
 
     .upload-zone small {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
     }
 
     input[type="file"] {
       display: none;
     }
 
-    .btn-secondary {
-      background: var(--surface-white);
-      color: var(--text-main);
-      border: 1px solid var(--border-active);
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-      background: var(--accent-lavender);
-    }
-
-    .btn-secondary:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
+    /* Control Item */
     .control-item {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .label-row {
@@ -215,119 +318,216 @@
     }
 
     label {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      color: var(--text-main);
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
     }
 
     .val-badge {
       font-size: 0.75rem;
-      font-weight: 500;
-      background: var(--accent-sage);
-      color: #39524A;
-      padding: 2px 8px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 4px 12px;
       border-radius: 20px;
+      letter-spacing: 0.5px;
     }
 
+    /* Range Slider - Modern */
     input[type="range"] {
       -webkit-appearance: none;
       width: 100%;
-      height: 6px;
-      border-radius: 3px;
-      background: var(--border-subtle);
+      height: 8px;
+      border-radius: 10px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
       outline: none;
+      cursor: pointer;
+      position: relative;
     }
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: var(--btn-primary);
+      background: white;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: transform 0.1s ease;
+      box-shadow: var(--shadow-md), 0 0 0 8px rgba(139, 92, 246, 0.2);
+      transition: all var(--transition-fast);
+      border: 2px solid var(--primary);
     }
 
     input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: var(--shadow-lg), 0 0 0 12px rgba(139, 92, 246, 0.3);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:active {
       transform: scale(1.15);
     }
 
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      border: 2px solid var(--primary);
+      box-shadow: var(--shadow-md), 0 0 0 8px rgba(139, 92, 246, 0.2);
+      transition: all var(--transition-fast);
+    }
+
+    input[type="range"]::-moz-range-thumb:hover {
+      transform: scale(1.2);
+    }
+
     input[type="range"]:disabled {
-      opacity: 0.35;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
-    .download-button {
-      background: var(--btn-primary);
-      color: #FFFFFF;
-      font-size: 0.95rem;
+    /* Buttons */
+    .btn-secondary, .download-button {
+      font-family: inherit;
       font-weight: 600;
-      padding: 14px 20px;
-      border-radius: var(--radius-md);
       border: none;
+      border-radius: var(--radius-lg);
       cursor: pointer;
+      transition: all var(--transition-base);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 8px 18px rgba(142, 154, 175, 0.25);
-      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .download-button:hover:not(:disabled) {
-      background: var(--btn-hover);
-      transform: translateY(-1px);
+    .btn-secondary {
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--primary-light);
+      padding: 11px 20px;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
     }
 
-    .download-button:disabled {
-      background: #D8D2C9;
-      box-shadow: none;
+    .btn-secondary::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(139, 92, 246, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width var(--transition-base), height var(--transition-base);
+    }
+
+    .btn-secondary:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: var(--primary);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:disabled {
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
+    .download-button {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 14px 24px;
+      font-size: 0.95rem;
+      box-shadow: var(--shadow-md), 0 10px 30px rgba(139, 92, 246, 0.3);
+      width: 100%;
+    }
+
+    .download-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left var(--transition-base);
+    }
+
+    .download-button:hover::before {
+      left: 100%;
+    }
+
+    .download-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), 0 15px 40px rgba(139, 92, 246, 0.4);
+    }
+
+    .download-button:active {
+      transform: translateY(0);
+    }
+
+    .download-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Loading Status */
     .loading-status {
       display: none;
       font-size: 0.85rem;
-      color: #7D899E;
+      color: var(--accent);
       text-align: center;
-      margin-top: -8px;
+      animation: pulse 2s infinite;
     }
 
+    /* Modal */
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(30, 27, 24, 0.5);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 2000;
       padding: 20px;
+      animation: fadeIn var(--transition-base);
     }
 
     .modal-card {
-      background: var(--surface-white);
-      border-radius: var(--radius-lg);
-      padding: 24px;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      padding: 32px;
       width: 100%;
       max-width: 650px;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      box-shadow: var(--shadow-float);
+      gap: 20px;
+      box-shadow: var(--shadow-xl);
+      backdrop-filter: blur(20px);
+      animation: slideUp var(--transition-base);
     }
 
     .crop-wrapper {
       width: 100%;
       height: 420px;
-      background: #FAF8F5;
-      border-radius: var(--radius-sm);
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius-lg);
       overflow: hidden;
+      border: 1px solid var(--border);
     }
 
     .crop-wrapper img {
@@ -337,44 +537,165 @@
 
     .modal-actions {
       display: flex;
-      justify-content: flex-end;
       gap: 12px;
+      justify-content: flex-end;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 80px;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-secondary);
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    footer p {
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+      font-weight: 600;
+      position: relative;
+      transition: all var(--transition-base);
+    }
+
+    footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width var(--transition-base);
+    }
+
+    footer a:hover::after {
+      width: 100%;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 40px 20px 30px;
+      }
+
+      .app-container {
+        padding: 20px;
+      }
+
+      .controls-card {
+        position: relative;
+        top: 0;
+      }
+
+      .preview-card {
+        min-height: 400px;
+      }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <div style="font-size: 1.2rem; font-weight: 700; color: var(--btn-primary); margin-bottom: 16px; letter-spacing: 1px;">Tinussyy Design</div>
-    <h1>Pastel Stamp Studio</h1>
-    <p>Upload, crop, and generate clean perforated stamp art</p>
+    <div class="logo">✦ Tinussyy Design</div>
+    <h1>Stamp Studio</h1>
+    <p>Transform your photos into beautiful perforated stamp artwork</p>
   </header>
 
   <div class="app-container">
     <div class="preview-card">
       <div id="placeholder" class="placeholder-box">
-        <div class="placeholder-icon">✦</div>
-        <p>Upload an image to start designing</p>
+        <div class="placeholder-icon">🎨</div>
+        <h3>Upload your image</h3>
+        <p style="margin-top: 8px; color: var(--text-tertiary);">Drop your photo here to get started</p>
       </div>
       <canvas id="mainCanvas" style="display: none;"></canvas>
     </div>
 
     <div class="controls-card">
       <label class="upload-zone" for="fileInput">
+        <i class="fas fa-cloud-arrow-up"></i>
         <span>Choose photo</span>
-        <small>Supports PNG, JPG, HEIC, WebP, etc.</small>
+        <small>PNG, JPG, HEIC, WebP</small>
       </label>
       <input type="file" id="fileInput" accept="image/*,.heic,.heif" />
 
-      <div id="loadingStatus" class="loading-status">Converting format, please wait...</div>
+      <div id="loadingStatus" class="loading-status">Converting format...</div>
 
       <button id="cropModalBtn" class="btn-secondary" disabled>
-        ✂ Adjust Image Crop
+        <i class="fas fa-crop"></i> Crop Image
       </button>
 
       <div class="control-item">
         <div class="label-row">
-          <label for="stampSize">Stamp Size</label>
+          <label for="stampSize">Size</label>
           <span class="val-badge" id="sizeVal">180 px</span>
         </div>
         <input type="range" id="stampSize" min="80" max="450" value="180" disabled />
@@ -382,15 +703,15 @@
 
       <div class="control-item">
         <div class="label-row">
-          <label for="stampTeeth">Perforation Density</label>
-          <span class="val-badge" id="teethVal">7 teeth</span>
+          <label for="stampTeeth">Density</label>
+          <span class="val-badge" id="teethVal">7</span>
         </div>
         <input type="range" id="stampTeeth" min="3" max="14" value="7" step="1" disabled />
       </div>
 
       <div class="control-item">
         <div class="label-row">
-          <label for="posX">Horizontal Position</label>
+          <label for="posX">Horizontal</label>
           <span class="val-badge" id="xVal">50%</span>
         </div>
         <input type="range" id="posX" min="0" max="100" value="50" disabled />
@@ -398,7 +719,7 @@
 
       <div class="control-item">
         <div class="label-row">
-          <label for="posY">Vertical Position</label>
+          <label for="posY">Vertical</label>
           <span class="val-badge" id="yVal">35%</span>
         </div>
         <input type="range" id="posY" min="0" max="100" value="35" disabled />
@@ -406,30 +727,41 @@
 
       <div class="control-item">
         <div class="label-row">
-          <label for="bottomPad">Card Base Height</label>
+          <label for="bottomPad">Card Height</label>
           <span class="val-badge" id="padVal">260 px</span>
         </div>
         <input type="range" id="bottomPad" min="150" max="5000" value="260" disabled />
       </div>
 
       <button id="downloadBtn" class="download-button" disabled>
-        Export Stamp
+        <i class="fas fa-download"></i> Export Stamp
       </button>
     </div>
   </div>
 
   <div id="cropModal" class="modal-overlay">
     <div class="modal-card">
-      <h3 style="font-size: 1.1rem;">Crop Image Size</h3>
+      <h3>Crop & Frame</h3>
       <div class="crop-wrapper">
-        <img id="cropperImage" src="" alt="Crop Source" />
+        <img id="cropperImage" src="" alt="Crop" />
       </div>
       <div class="modal-actions">
-        <button id="cancelCropBtn" class="btn-secondary">Cancel</button>
-        <button id="applyCropBtn" class="download-button" style="padding: 10px 20px;">Apply Crop</button>
+        <button id="cancelCropBtn" class="btn-secondary">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button id="applyCropBtn" class="download-button">
+          <i class="fas fa-check"></i> Apply
+        </button>
       </div>
     </div>
   </div>
+
+  <footer>
+    <p>You create everything because you are everything,<br>and every inspiration is already inside you.</p>
+    <p>Created by <a href="https://instagram.com/tinussyydesign" target="_blank">
+      <i class="fas fa-heart"></i> Tinussyydesign
+    </a></p>
+  </footer>
 
   <script>
     const fileInput = document.getElementById('fileInput');
@@ -537,7 +869,7 @@
     [stampSize, stampTeeth, posX, posY, bottomPad].forEach(input => {
       input.addEventListener('input', () => {
         document.getElementById('sizeVal').textContent = `${stampSize.value} px`;
-        document.getElementById('teethVal').textContent = `${stampTeeth.value} teeth`;
+        document.getElementById('teethVal').textContent = stampTeeth.value;
         document.getElementById('xVal').textContent = `${posX.value}%`;
         document.getElementById('yVal').textContent = `${posY.value}%`;
         document.getElementById('padVal').textContent = `${bottomPad.value} px`;
@@ -599,7 +931,6 @@
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // 1. Draw main image
       ctx.drawImage(loadedImg, 0, 0);
 
       const stampX = (w - size) * (parseInt(posX.value, 10) / 100);
@@ -607,32 +938,27 @@
 
       const stampPath = createStampPath(size, size, teeth);
 
-      // 2. Solid white cutout on top of the original image
       ctx.save();
       ctx.translate(stampX, stampY);
       ctx.fillStyle = '#FFFFFF';
       ctx.fill(stampPath);
       ctx.restore();
 
-      // 3. Render bottom stamp (exact 1:1 scale matching stampPath without white margin)
       const bottomX = (w - size) / 2;
       const bottomY = h + (extraPad - size) / 2;
 
       ctx.save();
       ctx.translate(bottomX, bottomY);
 
-      // Soft drop shadow matching the stamp outline
       ctx.shadowColor = 'rgba(160, 140, 125, 0.22)';
       ctx.shadowBlur = 24;
       ctx.shadowOffsetY = 10;
       ctx.fillStyle = '#FFFFFF';
       ctx.fill(stampPath);
 
-      // Clip precisely to the stamp perforation shape
       ctx.shadowColor = 'transparent';
       ctx.clip(stampPath);
 
-      // Draw the extracted image region edge-to-edge
       ctx.drawImage(
         loadedImg,
         stampX, stampY, size, size,
@@ -649,10 +975,5 @@
       link.click();
     });
   </script>
-
-  <footer style="margin-top: 60px; padding-top: 32px; border-top: 1px solid var(--border-subtle); text-align: center; color: var(--text-muted); font-size: 0.85rem;">
-    <p style="margin-bottom: 8px;">You create everything because you are everything, and every inspiration is already inside you.</p>
-    <p>Created by <a href="https://instagram.com/tinussyydesign" target="_blank" style="color: var(--btn-primary); text-decoration: none; font-weight: 600; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">Tinussyydesign</a></p>
-  </footer>
 </body>
 </html>
